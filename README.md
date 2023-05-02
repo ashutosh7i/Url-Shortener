@@ -10,3 +10,6 @@ also it will log the no. of time someone visited/redirected to the page.
 3. ``GET/analytics/:id``- Returns the clicks for the provied short id.
 
 ## The backend part is completed
+
+### 11:37PM 02-05-2023
+Implementing EJS for server side rendered frontend
