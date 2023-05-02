@@ -1,14 +1,14 @@
 /*we will use nano id to generate nano id for the url
 ex-
-nonoid(5)=A3K88
-nonoid(7)=JK7HIH7
+shortid(5)=A3K88
+shortid(7)=JK7HIH7
 */
-const { nanoid } = require("nanoid")
+const shortid = require('shortid');
 
 //importing database
 const URL = require("../models/url")
 
-async function handlegenerateNewShortURL(req, url) {
+async function handlegenerateNewShortURL(req, res) {
 
     const body = req.body;
 
@@ -16,7 +16,7 @@ async function handlegenerateNewShortURL(req, url) {
     if (!body.url) return res.status(400).json({ error: "Invalid URL/URL Absent" })
 
     //generate a new short id
-    const shortID = nanoid(7);
+    const shortID = shortid.generate(7);
 
     //store the redirectURL and the assigned shortid in db
     await URL.create({
@@ -29,4 +29,4 @@ async function handlegenerateNewShortURL(req, url) {
     return res.json({ id: shortID })
 }
 
-module.exports = {handlegenerateNewShortURL}
+module.exports = { handlegenerateNewShortURL }
