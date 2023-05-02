@@ -5,5 +5,6 @@ const { handlegenerateNewShortURL, handleRedirectShortId } = require("../control
 
 
 router.post("/", handlegenerateNewShortURL);
-router.get("/:shortId", handleRedirectShortId)
+router.get("/:shortId", handleRedirectShortId);
+
 module.exports = router;
