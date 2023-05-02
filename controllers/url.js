@@ -38,7 +38,7 @@ async function handleRedirectShortId(req, res) {
         },
         {
             $push: {
-                visitHistory: { timestamp: req.headers['x-forwarded-for'] || req.socket.remoteAddress },
+                visitHistory: { timestamp: date, ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress }
             }
         }
     );
