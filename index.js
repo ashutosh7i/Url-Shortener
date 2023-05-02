@@ -12,6 +12,4 @@ app.use(express.json())
 app.use("/url", urlRoute)
 
 
-
-
 app.listen(port, () => console.log(`Server started at port ${port}`))
