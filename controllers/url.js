@@ -10,9 +10,7 @@ let date = moment().format("DD MM YYYY, hh:mm:ss a");
 const URL = require("../models/url")
 
 async function handlegenerateNewShortURL(req, res) {
-
     const body = req.body;
-
     //if url body absent,send error
     if (!body.url) return res.status(400).json({ error: "Invalid URL/URL Absent" })
 
@@ -30,6 +28,7 @@ async function handlegenerateNewShortURL(req, res) {
     return res.json({ id: shortID })
 }
 
+//function to handle the get requests on ip/url/shortid and redirect to respective website from db
 async function handleRedirectShortId(req, res) {
     const shortId = req.params.shortId;
     const entry = await URL.findOneAndUpdate(
@@ -45,4 +44,14 @@ async function handleRedirectShortId(req, res) {
     res.redirect(entry.redirectURL)
 }
 
-module.exports = { handlegenerateNewShortURL, handleRedirectShortId }
+//fuction to handle the ip/analytics/shortid to show analyics
+async function handleGetAnalytics(req, res) {
+    const shortId = req.params.shortId;
+    const result = await URL.findOne({ shortId });
+    return res.json({
+        total_No_of_Clicks: result.visitHistory.length,
+        Analytics: result.visitHistory
+    });
+}
+
+module.exports = { handlegenerateNewShortURL, handleRedirectShortId, handleGetAnalytics }
