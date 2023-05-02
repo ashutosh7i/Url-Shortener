@@ -4,7 +4,8 @@ shortid(5)=A3K88
 shortid(7)=JK7HIH7
 */
 const shortid = require('shortid');
-
+const moment = require("moment")
+let date = moment().format("DD MM YYYY, hh:mm:ss a");
 //importing database
 const URL = require("../models/url")
 
@@ -29,4 +30,19 @@ async function handlegenerateNewShortURL(req, res) {
     return res.json({ id: shortID })
 }
 
-module.exports = { handlegenerateNewShortURL }
+async function handleRedirectShortId(req, res) {
+    const shortId = req.params.shortId;
+    const entry = await URL.findOneAndUpdate(
+        {
+            shortId
+        },
+        {
+            $push: {
+                visitHistory: { timestamp: req.headers['x-forwarded-for'] || req.socket.remoteAddress },
+            }
+        }
+    );
+    res.redirect(entry.redirectURL)
+}
+
+module.exports = { handlegenerateNewShortURL, handleRedirectShortId }
