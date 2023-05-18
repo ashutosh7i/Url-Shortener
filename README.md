@@ -13,3 +13,30 @@ also it will log the no. of time someone visited/redirected to the page.
 
 ### 11:37PM 02-05-2023
 Implementing EJS for server side rendered frontend
+
+## Template engine
+engines that help use use server sider rendering in order to make frontend
+* Pug.
+* Handlebars.
+* EJS.- we will be using it.
+
+## Setup-
+
+install-``npm install ejs``
+```
+//setting EJS view engine
+app.set("view engine", "ejs");
+const path = require("path");
+app.set("views",path.resolve("./views"))
+```
+Use- now we can render like``res.render("home")``
+where "home" is a file in views folder
+
+
+
+
+if get request on / then render homepage
+if get request on / with some body after /
+    if the body is valid and present in the db, redirect to the website
+    if the body id invalid, render a 404.
+
