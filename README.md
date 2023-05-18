@@ -1,42 +1,66 @@
-# Url-Shortener
-A simple URL shortener API using node&amp;Express js
+# URL Shortener Project
 
-This is a simple URL shortener intended to shorten URL provied to it,
-also it will log the no. of time someone visited/redirected to the page.
+This is a URL shortener project built with Node.js, Express, and EJS. It allows users to generate short URLs for long website links, track visitor analytics, and redirect users to the original website when accessing the short URL.
 
-### Routes-
-1. ``POST/{url:"full url"}``- Generate a short URL and return the shortened URL id.
-2. ``GET/:id``- Redirect the user the original URL.
-3. ``GET/analytics/:id``- Returns the clicks for the provied short id.
+## Features
 
-## The backend part is completed
+- Generate short URLs for long website links.
+- Track visitor analytics including total clicks and visit history.
+- Custom 404 page for handling invalid short URLs.
+- Simple and user-friendly UI.
 
-### 11:37PM 02-05-2023
-Implementing EJS for server side rendered frontend
+## Installation
 
-## Template engine
-engines that help use use server sider rendering in order to make frontend
-* Pug.
-* Handlebars.
-* EJS.- we will be using it.
+1. Clone the repository:
+   ```
+   git clone https://github.com/ashutosh7i/Url-Shortener
+   ```
+2. Install dependencies:
+    ```
+    cd url-shortener
+    npm install
+    ```
+3. Start the server:
+    ```
+    node start index.js
+    ```
+4. Open your browser and access the URL http://localhost:3000 to use the URL shortener application.
 
-## Setup-
+## File Structure
 
-install-``npm install ejs``
-```
-//setting EJS view engine
-app.set("view engine", "ejs");
-const path = require("path");
-app.set("views",path.resolve("./views"))
-```
-Use- now we can render like``res.render("home")``
-where "home" is a file in views folder
+The project has the following file structure:
 
+├── controllers
+│   └── url.js
+├── models
+│   └── url.js
+├── routes
+│   └── url.js
+├── views
+│   ├── 404.ejs
+│   ├── 500.ejs
+│   ├── analytics.ejs
+│   ├── generated.ejs
+│   └── Home.ejs
+├── index.js
+└── README.md
 
+* The controllers directory contains the URL controller file responsible for handling requests and responses.
+* The models directory contains the URL model file defining the schema for the MongoDB database.
+* The routes directory contains the Express Router for routing diffrent requests from / to respective handler.
+* The views directory holds the EJS template files for different pages of the application.
+* The index.js file is the entry point of the application where the server is initialized and routes are defined.
 
+## Dependencies
 
-if get request on / then render homepage
-if get request on / with some body after /
-    if the body is valid and present in the db, redirect to the website
-    if the body id invalid, render a 404.
+The project uses the following major dependencies:
 
+* Express: Fast and minimalist web framework for Node.js.
+* EJS: Embedded JavaScript templating engine for generating dynamic HTML pages.
+* Mongoose: MongoDB object modeling tool for Node.js.
+* Shortid: Library for generating short, non-sequential, URL-friendly unique IDs.
+* Moment: Library for parsing, manipulating, and formatting dates and times.
+
+## Contributions
+
+Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
