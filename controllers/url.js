@@ -1,113 +1,90 @@
-/*we will use nano id to generate nano id for the url
-ex-
-shortid(5)=A3K88
-shortid(7)=JK7HIH7
-*/
-
 const shortid = require('shortid');
-const moment = require("moment")
-let date = moment().format("DD MM YYYY, hh:mm:ss a");
-//importing database
-const URL = require("../models/url")
+const moment = require("moment");
+const URL = require("../models/url");
 
-//handle the get request
+// Handle the GET request
 async function handleGetRequest(req, res) {
-    return res.render("Home")
+    try {
+        return res.render("Home");
+    } catch (error) {
+        console.error(error);
+        res.status(500).render("500");
+    }
 }
 
-
-//function to handle the get requests on ip/shortid and redirect to respective website from db
+// Handle the GET requests on /shortid and redirect to the respective website from the database
 async function handleRedirectUsingShortId(req, res) {
+    try {
+        const shortId = req.params.shortId;
 
-    //parsing url from request body
-    const shortId = req.params.body;
+        const shortUrl = await URL.findOne({ shortId });
 
-    //webdev simplified soln
-
-    //finding the shortId in database
-    const shortUrl = await URL.findOne({ shortId: shortId })
-
-    //if not found then render 404 page
-    if (shortUrl == null) return res.status(404).render("404");
-
-    //if present in db, increase the visitHistory and redirect
-    const entry = await URL.findOneAndUpdate(
-        {
-            shortId
-        },
-        {
-            $push: {
-                visitHistory: { timestamp: date, ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress }
-            }
+        if (!shortUrl) {
+            return res.status(404).render("404");
         }
-    );
-    res.redirect(entry.redirectURL)
+
+        const entry = await URL.findOneAndUpdate(
+            { shortId },
+            {
+                $push: {
+                    visitHistory: { timestamp: moment().format("DD MM YYYY, hh:mm:ss a"), ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress }
+                }
+            }
+        );
+
+        res.redirect('https://'+entry.redirectURL);
+    } catch (error) {
+        console.error(error);
+        res.status(500).render("500");
+    }
 }
 
-//Generate a new shortId with form or POST
+// Generate a new shortId with the provided URL
 async function handlePostGenerateNewShortURL(req, res) {
-    const body = req.body.url;
-    //if url body absent,send error
-    if (!body) return res.status(400).json({ error: "Invalid URL/URL Absent" })
+    try {
+        const body = req.body.url;
 
-    //generate a new short id
-    const shortID = shortid.generate(7);
+        if (!body) {
+            return res.status(400).json({ error: "Invalid URL/URL Absent" });
+        }
 
-    //store the redirectURL and the assigned shortid in db
-    await URL.create({
-        shortId: shortID,
-        redirectURL: body,
-        visitHistory: [],
-    });
+        const shortID = shortid.generate(7);
 
-    //return saved shortId
-    // return res.json({ id: shortID })
-    let redirect = `localhost:7000/${shortID}`;
-    let analytics = `localhost:7000/analytics/${shortID}`;
-    res.render("generated", { redirect, analytics })
+        await URL.create({
+            shortId: shortID,
+            redirectURL: body,
+            visitHistory: [],
+        });
+
+        const redirectURL = `localhost:7000/${shortID}`;
+        const analyticsURL = `localhost:7000/analytics/${shortID}`;
+
+        res.render("generated", { redirectURL, analyticsURL });
+    } catch (error) {
+        console.error(error);
+        res.status(500).render("500");
+    }
 }
 
-
-// async function handlePostGenerateNewShortURL(req, res) {
-//     const formUrl = req.body.url;
-
-//     // If URL is absent or invalid, send an error response
-//     if (!formUrl) {
-//         return res.status(400).json({ error: "Invalid URL/URL Absent" });
-//     }
-
-//     // Generate a new short ID
-//     const shortID = shortid.generate(7);
-
-//     // Store the redirect URL and the assigned short ID in the database
-//     await URL.create({
-//         shortId: shortID,
-//         redirectURL: formUrl,
-//         visitHistory: [],
-//     });
-
-//     // Construct the URLs for redirect and analytics
-//     const redirectURL = `localhost:7000/${shortID}`;
-//     const analyticsURL = `localhost:7000/analytics/${shortID}`;
-
-//     // Render the "generated.ejs" template with the URLs
-//     res.render("generated", { redirectURL, analyticsURL });
-// }
-
-
-
-//fuction to handle the ip/analytics/shortid to show analyics
+// Handle the GET request on /analytics/shortid to show analytics
 async function handleGetAnalytics(req, res) {
-    const shortId = req.params.shortId;
-    const result = await URL.findOne({ shortId });
-    // return res.json({
-    //     total_No_of_Clicks: result.visitHistory.length,
-    //     Analytics: result.visitHistory
-    // });
-    res.render("analytics", {
-        total_No_of_Clicks: result.visitHistory.length,
-        Analytics: result.visitHistory
-    })
+    try {
+        const shortId = req.params.shortId;
+        const result = await URL.findOne({ shortId });
+
+        res.render("analytics", {
+            total_No_of_Clicks: result.visitHistory.length,
+            Analytics: result.visitHistory
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).render("500");
+    }
 }
 
-module.exports = { handleGetRequest, handleRedirectUsingShortId, handlePostGenerateNewShortURL, handleGetAnalytics }
+module.exports = {
+    handleGetRequest,
+    handleRedirectUsingShortId,
+    handlePostGenerateNewShortURL,
+    handleGetAnalytics
+};

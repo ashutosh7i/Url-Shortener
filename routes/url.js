@@ -12,7 +12,7 @@ const {
 
 //routing to specific controller functions
 router.get("/", handleGetRequest)
-router.get("/:body", handleRedirectUsingShortId)
+router.get("/:shortId", handleRedirectUsingShortId)
 router.post("/", handlePostGenerateNewShortURL);
 // router.get("/r/:shortId", handleRedirectUsingShortId);
 router.get("/analytics/:shortId", handleGetAnalytics);
